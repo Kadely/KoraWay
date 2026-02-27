@@ -1133,7 +1133,9 @@ function sendAsk() {
   askHistory.push({role:'user', content:text});
   var u    = currentUser;
   var host = getMyHost();
-  var system = 'You are KoraWay AI helping ' + u.first_name + ', a student from ' + u.country + ' who speaks ' + u.language + ', attending ' + u.school + ' in Boston, arriving ' + u.arrival_period + '. Needs: ' + u.needs.join(', ') + '.' + (host ? ' Their host is ' + host.first_name + ' ' + host.last_name + '.' : '') + ' Always respond in English. Be practical and specific. Use bullet points and bold text to make your answer easy to read. Keep it concise — 3 to 5 bullet points max.';
+  var system = 'You are KoraWay AI helping ' + u.first_name + ', a student from ' + u.country + ' who speaks ' + u.language + ', attending ' + u.school + ' in Boston, arriving ' + u.arrival_period + '. Needs: ' + u.needs.join(', ') + '.'
+    + (host ? ' Their host is ' + host.first_name + ' ' + host.last_name + ', located in Boston, speaks ' + (host.languages_spoken||[]).join(', ') + ', supports ' + (host.support_areas||[]).join(', ') + '. Home details: ' + (host.home_details||'') + '.' : '')
+    + ' Always respond in English. Be practical and specific. Use bullet points and bold text to make your answer easy to read. Keep it concise — 3 to 5 bullet points max.';
   callClaude(askHistory, system, 250).then(function(reply) {
     reply = reply || "That is a great question. I recommend reaching out to your university's international student office for the most current information.";
     askHistory.push({role:'assistant', content:reply});
