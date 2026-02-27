@@ -1087,13 +1087,38 @@ function askSuggested(q) {
 }
 
 function cleanReply(text) {
-  return text
-    .replace(/#{1,6}\s+/g, '')
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g, '$1')
-    .replace(/^[-•]\s+/gm, '· ')
-    .replace(/\n{2,}/g, '<br/><br/>')
-    .replace(/\n/g, '<br/>');
+  // Convert markdown to clean readable HTML
+  var lines = text.split('\n');
+  var html = '';
+  var inList = false;
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i].trim();
+    if (!line) { if (inList) { html += '</ul>'; inList = false; } html += '<br/>'; continue; }
+    // Headers
+    if (/^#{1,3}\s+/.test(line)) {
+      if (inList) { html += '</ul>'; inList = false; }
+      line = line.replace(/^#{1,3}\s+/, '');
+      line = line.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+      html += '<div style="font-weight:700;margin:.5rem 0 .2rem;font-size:.83rem">' + line + '</div>';
+      continue;
+    }
+    // Bullet points
+    if (/^[-•*]\s+/.test(line)) {
+      if (!inList) { html += '<ul style="margin:.35rem 0 .35rem 1rem;padding:0">'; inList = true; }
+      line = line.replace(/^[-•*]\s+/, '');
+      line = line.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+      line = line.replace(/\*(.+?)\*/g, '<em>$1</em>');
+      html += '<li style="margin-bottom:.2rem;font-size:.8rem">' + line + '</li>';
+      continue;
+    }
+    // Normal line
+    if (inList) { html += '</ul>'; inList = false; }
+    line = line.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    line = line.replace(/\*(.+?)\*/g, '<em>$1</em>');
+    html += '<div style="margin-bottom:.25rem">' + line + '</div>';
+  }
+  if (inList) html += '</ul>';
+  return html;
 }
 
 function sendAsk() {
@@ -1108,7 +1133,7 @@ function sendAsk() {
   askHistory.push({role:'user', content:text});
   var u    = currentUser;
   var host = getMyHost();
-  var system = 'You are KoraWay AI helping ' + u.first_name + ', a student from ' + u.country + ' who speaks ' + u.language + ', attending ' + u.school + ' in Boston, arriving ' + u.arrival_period + '. Needs: ' + u.needs.join(', ') + '.' + (host ? ' Their host is ' + host.first_name + ' ' + host.last_name + '.' : '') + ' Give practical, specific answers in 2-4 sentences in English only. No markdown formatting.';
+  var system = 'You are KoraWay AI helping ' + u.first_name + ', a student from ' + u.country + ' who speaks ' + u.language + ', attending ' + u.school + ' in Boston, arriving ' + u.arrival_period + '. Needs: ' + u.needs.join(', ') + '.' + (host ? ' Their host is ' + host.first_name + ' ' + host.last_name + '.' : '') + ' Always respond in English. Be practical and specific. Use bullet points and bold text to make your answer easy to read. Keep it concise — 3 to 5 bullet points max.';
   callClaude(askHistory, system, 250).then(function(reply) {
     reply = reply || "That is a great question. I recommend reaching out to your university's international student office for the most current information.";
     askHistory.push({role:'assistant', content:reply});
