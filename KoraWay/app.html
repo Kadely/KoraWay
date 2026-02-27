@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>KoraWay — Student App</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--green:#1B6B3A;--green2:#145230;--green3:#0a2e18;--gold:#F0A500;--dark:#1A1A1A;--ivory:#FAF6EF;--white:#fff;--muted:#6B7280;--border:#E5E0D8;--purple:#7C3AED}
+html,body{height:100%;font-family:'Plus Jakarta Sans',sans-serif;background:var(--ivory);color:var(--dark);overflow:hidden}
+body{display:flex;flex-direction:column}
+.topbar{height:52px;background:var(--green3);display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;flex-shrink:0}
+.topbar-logo{font-weight:800;font-size:1rem;color:var(--gold);text-decoration:none;display:flex;align-items:center;gap:.5rem}
+.topbar-badge{font-size:.58rem;background:rgba(240,165,0,.2);color:var(--gold);border-radius:4px;padding:.1rem .4rem;font-weight:600}
+.topbar-back{color:rgba(255,255,255,.45);font-size:.79rem;text-decoration:none;font-weight:500}
+.app-body{flex:1;display:grid;grid-template-columns:230px 1fr;overflow:hidden}
+.sidebar{background:var(--green3);display:flex;flex-direction:column;border-right:1px solid rgba(255,255,255,.06);overflow-y:auto}
+.sidebar-user{padding:1.25rem;border-bottom:1px solid rgba(255,255,255,.07)}
+.su-photo{width:48px;height:48px;border-radius:50%;background:var(--gold);color:var(--dark);font-size:1rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-bottom:.65rem;overflow:hidden}
+.su-photo img{width:100%;height:100%;object-fit:cover}
+.su-name{color:#fff;font-size:.9rem;font-weight:700}
+.su-role{color:rgba(255,255,255,.4);font-size:.72rem;margin-top:.1rem}
+.su-pill{display:inline-flex;align-items:center;gap:.3rem;margin-top:.45rem;background:rgba(240,165,0,.12);border:1px solid rgba(240,165,0,.22);color:var(--gold);border-radius:4px;padding:.15rem .5rem;font-size:.67rem;font-weight:700}
+.sidebar-nav{padding:.75rem 0;flex:1}
+.s-section{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.22);padding:.5rem 1.25rem .3rem}
+.s-item{display:flex;align-items:center;gap:.7rem;padding:.65rem 1.25rem;color:rgba(255,255,255,.48);font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;border-left:2px solid transparent;text-decoration:none}
+.s-item:hover{color:rgba(255,255,255,.82);background:rgba(255,255,255,.04)}
+.s-item.active{color:#fff;background:rgba(255,255,255,.07);border-left-color:var(--gold)}
+.s-item svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.s-badge{background:var(--gold);color:var(--dark);border-radius:99px;font-size:.6rem;font-weight:700;padding:.1rem .42rem;margin-left:auto}
+.sidebar-footer{padding:1rem 1.25rem;border-top:1px solid rgba(255,255,255,.06)}
+.s-logout{display:flex;align-items:center;gap:.6rem;color:rgba(255,255,255,.28);font-size:.78rem;font-weight:600;cursor:pointer;transition:color .2s;background:none;border:none;font-family:inherit;width:100%;padding:0}
+.s-logout:hover{color:rgba(255,255,255,.6)}
+.s-logout svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.main{display:flex;flex-direction:column;overflow:hidden}
+.main-topbar{height:48px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 1.5rem;flex-shrink:0;background:var(--white)}
+.main-title{font-size:.9rem;font-weight:700}
+.main-content{flex:1;overflow-y:auto;padding:1.5rem}
+.btn{border:none;border-radius:7px;font-family:inherit;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-sm{padding:.38rem .85rem;font-size:.77rem}
+.btn-md{padding:.6rem 1.2rem;font-size:.84rem;font-weight:700}
+.btn-green{background:var(--green);color:#fff}.btn-green:hover{background:var(--green2)}
+.btn-gold{background:var(--gold);color:var(--dark)}.btn-gold:hover{background:#d99200}
+.btn-ghost{background:transparent;color:var(--muted);border:1.5px solid var(--border)}.btn-ghost:hover{border-color:var(--green);color:var(--green)}
+.btn-outline{background:transparent;color:var(--green);border:1.5px solid var(--green)}
+.banner{background:var(--green3);border-radius:14px;padding:1.25rem 1.5rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
+.banner h2{color:#fff;font-size:1.05rem;font-weight:700;margin-bottom:.2rem}
+.banner p{color:rgba(255,255,255,.48);font-size:.79rem}
+.banner-badge{background:rgba(240,165,0,.15);border:1px solid rgba(240,165,0,.25);border-radius:8px;padding:.32rem .8rem;color:var(--gold);font-size:.74rem;font-weight:700;white-space:nowrap}
+.accepted-banner{background:linear-gradient(135deg,#0f4726,var(--green));border-radius:14px;padding:1.1rem 1.4rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.25rem;border:1px solid rgba(74,222,128,.25);animation:abfade .5s ease}
+@keyframes abfade{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.accepted-banner strong{display:block;color:#fff;font-size:.9rem;font-weight:700;margin-bottom:.15rem}
+.accepted-banner p{color:rgba(255,255,255,.55);font-size:.78rem}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:.85rem;margin-bottom:1.25rem}
+.stat-c{background:var(--white);border-radius:12px;border:1px solid var(--border);padding:1rem}
+.stat-c-val{font-family:'Playfair Display',serif;font-size:1.7rem;color:var(--green);line-height:1;margin-bottom:.2rem}
+.stat-c-lbl{font-size:.78rem;font-weight:700;margin-bottom:.1rem}
+.stat-c-sub{font-size:.7rem;color:var(--muted)}
+.content-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem;margin-top:1.4rem}
+.content-hdr h3{font-size:.9rem;font-weight:700}
+.tag{border-radius:4px;padding:.18rem .52rem;font-size:.7rem;font-weight:600;display:inline-block}
+.tag-ivory{background:var(--ivory);color:var(--dark)}
+.tag-green{background:#EEF7F1;color:var(--green)}
+.tag-gold{background:#FEF6E4;color:#7a4f00}
+.tag-purple{background:#F5F0FF;color:var(--purple)}
+.ai-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pd .8s ease-in-out infinite alternate;flex-shrink:0;display:inline-block}
+@keyframes pd{from{opacity:.3}to{opacity:1}}
+.host-cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.host-card{background:var(--white);border-radius:14px;border:1px solid var(--border);overflow:hidden;transition:border-color .2s}
+.host-card:hover{border-color:rgba(240,165,0,.4)}
+.host-card.selected-card{border-color:var(--green);box-shadow:0 2px 16px rgba(27,107,58,.1)}
+.host-card-hdr{height:80px;background:linear-gradient(135deg,var(--green2),var(--green));position:relative;overflow:hidden}
+.host-card-hdr::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 8px,rgba(255,255,255,.03) 8px,rgba(255,255,255,.03) 9px)}
+.host-score-badge{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.3);color:#fff;font-size:.72rem;font-weight:700;border-radius:6px;padding:.25rem .65rem;backdrop-filter:blur(4px)}
+.host-score-badge.high{background:rgba(240,165,0,.85);color:var(--dark)}
+.host-rank-badge{position:absolute;top:10px;left:10px;background:rgba(255,255,255,.15);color:#fff;font-size:.65rem;font-weight:700;border-radius:4px;padding:.2rem .55rem}
+.selected-ribbon{position:absolute;top:10px;left:10px;background:var(--green);color:#fff;font-size:.65rem;font-weight:700;border-radius:4px;padding:.2rem .55rem}
+.host-av-circle{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);width:44px;height:44px;border-radius:50%;background:var(--ivory);border:3px solid var(--white);display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;color:var(--dark)}
+.host-card-body{padding:1.5rem .9rem .9rem;margin-top:.5rem}
+.host-name{font-size:.92rem;font-weight:700;text-align:center;margin-bottom:.1rem}
+.host-loc{font-size:.73rem;color:var(--muted);text-align:center;margin-bottom:.15rem}
+.host-rating{font-size:.73rem;color:var(--gold);text-align:center;margin-bottom:.75rem;font-weight:600}
+.sec-lbl{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:.3rem}
+.tag-row{display:flex;flex-wrap:wrap;gap:.25rem;margin-bottom:.6rem}
+.ai-snippet{background:var(--ivory);border-radius:8px;padding:.6rem .75rem;margin:.6rem 0;font-size:.76rem;color:var(--muted);line-height:1.55;border-left:2px solid var(--green)}
+.ai-snippet-lbl{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--green);margin-bottom:.25rem;display:flex;align-items:center;gap:.35rem}
+.host-card-footer{padding:.75rem .9rem;border-top:1px solid var(--border);display:flex;gap:.5rem}
+.modal-overlay{position:fixed;inset:0;background:rgba(10,46,24,.78);z-index:900;display:flex;align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(4px)}
+.modal-overlay.hidden{display:none}
+.modal-box{background:var(--white);border-radius:16px;width:100%;max-width:560px;max-height:88vh;overflow-y:auto}
+.modal-hdr{padding:1.1rem 1.4rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--white);z-index:1}
+.modal-hdr h3{font-size:.95rem;font-weight:700}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--muted);font-size:1.1rem;padding:.2rem}
+.modal-body{padding:1.4rem}
+.modal-host-hero{background:var(--green3);border-radius:12px;padding:1.25rem;display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem}
+.modal-host-av{width:52px;height:52px;border-radius:50%;background:var(--green);color:#fff;font-size:1rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:2px solid rgba(255,255,255,.15)}
+.modal-host-name{color:#fff;font-size:1rem;font-weight:700;margin-bottom:.2rem}
+.modal-host-meta{color:rgba(255,255,255,.5);font-size:.77rem;margin-bottom:.35rem}
+.modal-score-big{font-family:'Playfair Display',serif;font-size:2.2rem;color:var(--gold);line-height:1}
+.modal-score-lbl{font-size:.7rem;color:rgba(255,255,255,.45);margin-top:.1rem}
+.pros-cons-grid{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin-bottom:1.25rem}
+.pros-box{background:#EEF7F1;border-radius:10px;padding:.85rem}
+.cons-box{background:#FEF2F2;border-radius:10px;padding:.85rem}
+.pc-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.5rem}
+.pros-box .pc-title{color:var(--green)}
+.cons-box .pc-title{color:#C94B1F}
+.pc-item{font-size:.8rem;line-height:1.5;color:var(--dark);display:flex;align-items:flex-start;gap:.4rem;margin-bottom:.3rem}
+.pc-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:.45rem}
+.pros-box .pc-dot{background:var(--green)}
+.cons-box .pc-dot{background:#C94B1F}
+.review-item{background:var(--ivory);border-radius:10px;padding:.85rem;margin-bottom:.65rem}
+.review-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem}
+.review-name{font-size:.82rem;font-weight:700}
+.review-stars{color:var(--gold);font-size:.8rem}
+.review-country{font-size:.71rem;color:var(--muted)}
+.review-text{font-size:.8rem;line-height:1.6;color:var(--dark)}
+.full-reason-box{background:var(--ivory);border-radius:10px;padding:.85rem;margin-bottom:1.25rem;font-size:.82rem;line-height:1.7;color:var(--dark);border-left:3px solid var(--green)}
+.section-title-sm{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:.65rem;margin-top:1.1rem}
+.host-info-card{background:var(--green3);border-radius:14px;padding:1.25rem 1.5rem;display:flex;align-items:center;gap:1.1rem;margin-bottom:1.25rem}
+.host-info-av{width:48px;height:48px;border-radius:50%;background:var(--green);color:#fff;font-size:.95rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.host-info-name{color:#fff;font-size:.95rem;font-weight:700;margin-bottom:.15rem}
+.host-info-meta{color:rgba(255,255,255,.48);font-size:.77rem;margin-bottom:.4rem}
+.host-info-pills{display:flex;flex-wrap:wrap;gap:.3rem}
+.host-info-pill{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:.15rem .5rem;font-size:.69rem;font-weight:600;color:rgba(255,255,255,.75)}
+.plan-progress-bar{height:5px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;margin-top:.65rem}
+.plan-progress-fill{height:100%;background:var(--gold);border-radius:99px;transition:width .4s}
+.plan-week-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;cursor:pointer;padding:.4rem .5rem;border-radius:7px;transition:background .2s}
+.plan-week-hdr:hover{background:rgba(0,0,0,.03)}
+.plan-week-title{font-size:.81rem;font-weight:700;display:flex;align-items:center;gap:.5rem}
+.plan-week-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.plan-task{display:flex;align-items:flex-start;gap:.6rem;margin-bottom:.4rem;padding:.6rem .7rem;background:var(--white);border-radius:8px;border:1px solid var(--border)}
+.plan-check{width:17px;height:17px;border-radius:4px;border:1.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.6rem;margin-top:.15rem;background:var(--ivory)}
+.plan-check.done{background:var(--green);border-color:var(--green);color:#fff}
+.plan-task-body{flex:1;min-width:0}
+.plan-task-text{font-size:.81rem;line-height:1.5}
+.plan-task-text.done{text-decoration:line-through;color:var(--muted)}
+.plan-task-meta{display:flex;align-items:center;gap:.35rem;margin-top:.2rem;flex-wrap:wrap}
+.plan-comments{margin-top:.4rem;display:flex;flex-direction:column;gap:.3rem}
+.comment-bubble{border-radius:6px;padding:.3rem .6rem;font-size:.74rem;line-height:1.5}
+.comment-bubble.host{background:#EEF7F1;border-left:2px solid var(--green)}
+.comment-bubble.student{background:#F5F0FF;border-left:2px solid var(--purple)}
+.comment-who{font-size:.63rem;font-weight:700;color:var(--muted);margin-bottom:.1rem}
+.comment-input-row{display:flex;gap:.4rem;margin-top:.4rem}
+.comment-input{flex:1;border:1.5px solid var(--border);border-radius:6px;padding:.32rem .58rem;font-family:inherit;font-size:.76rem;outline:none}
+.comment-input:focus{border-color:var(--purple)}
+.comment-btn{background:var(--purple);color:#fff;border:none;border-radius:6px;padding:.32rem .65rem;font-family:inherit;font-size:.72rem;font-weight:600;cursor:pointer}
+.chat-panel{background:var(--white);border-radius:14px;border:1px solid var(--border);display:flex;flex-direction:column;height:calc(100vh - 200px)}
+.chat-hdr{padding:1rem 1.1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.75rem}
+.chat-hdr-av{width:34px;height:34px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center}
+.chat-hdr-av svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.chat-hdr-info strong{display:block;font-size:.88rem;font-weight:700}
+.chat-hdr-info span{font-size:.73rem;color:var(--muted)}
+.chat-body{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.65rem}
+.chat-bubble{max-width:82%;padding:.58rem .85rem;border-radius:10px;font-size:.82rem;line-height:1.55}
+.chat-bubble.ai{background:var(--ivory);border-radius:2px 10px 10px 10px;align-self:flex-start}
+.chat-bubble.user{background:var(--green);color:#fff;border-radius:10px 10px 2px 10px;align-self:flex-end}
+.chat-time{display:block;font-size:.65rem;color:var(--muted);margin-top:.25rem}
+.chat-bubble.user .chat-time{color:rgba(255,255,255,.5)}
+.chat-typing{display:flex;gap:.3rem;align-items:center;padding:.55rem .85rem;background:var(--ivory);border-radius:2px 10px 10px 10px;align-self:flex-start;width:fit-content}
+.td{width:6px;height:6px;border-radius:50%;background:var(--muted);animation:tda .8s ease-in-out infinite}
+.td:nth-child(2){animation-delay:.15s}.td:nth-child(3){animation-delay:.3s}
+@keyframes tda{0%,80%,100%{transform:scale(.8);opacity:.4}40%{transform:scale(1);opacity:1}}
+.chat-input-row{padding:.75rem;border-top:1px solid var(--border);display:flex;gap:.6rem}
+.chat-input{flex:1;border:1.5px solid var(--border);border-radius:8px;padding:.58rem .82rem;font-family:inherit;font-size:.84rem;outline:none}
+.chat-input:focus{border-color:var(--purple)}
+.chat-send{background:var(--purple);color:#fff;border:none;border-radius:8px;padding:.58rem 1.1rem;font-family:inherit;font-size:.8rem;font-weight:600;cursor:pointer}
+.profile-hero-card{background:var(--green3);border-radius:16px;padding:2rem;margin-bottom:1.25rem;display:flex;gap:1.5rem;align-items:flex-start}
+.profile-photo-wrap{position:relative;flex-shrink:0}
+.profile-photo{width:72px;height:72px;border-radius:50%;background:var(--gold);color:var(--dark);font-size:1.4rem;font-weight:700;display:flex;align-items:center;justify-content:center;overflow:hidden;border:2.5px solid rgba(255,255,255,.15)}
+.profile-photo img{width:100%;height:100%;object-fit:cover}
+.profile-photo-btn{position:absolute;bottom:0;right:0;width:22px;height:22px;border-radius:50%;background:var(--gold);color:var(--dark);border:none;cursor:pointer;font-size:.65rem;display:flex;align-items:center;justify-content:center;font-weight:700}
+.profile-hero-info h2{color:#fff;font-size:1.1rem;font-weight:700;margin-bottom:.2rem}
+.profile-hero-info p{color:rgba(255,255,255,.48);font-size:.79rem;margin-bottom:.6rem}
+.profile-pills{display:flex;flex-wrap:wrap;gap:.35rem}
+.profile-pill{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:5px;padding:.18rem .6rem;font-size:.7rem;font-weight:600;color:rgba(255,255,255,.75)}
+.info-card{background:var(--white);border-radius:14px;border:1px solid var(--border);overflow:hidden;margin-bottom:1rem}
+.info-card-hdr{padding:.7rem 1.1rem;border-bottom:1px solid var(--border);font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:.65rem 1.1rem;border-bottom:1px solid var(--border);font-size:.83rem}
+.info-row:last-child{border-bottom:none}
+.info-row .lbl{color:var(--muted);font-weight:500}
+.info-row .val{font-weight:600;text-align:right;max-width:62%}
+.login-screen{display:grid;grid-template-columns:1fr 1fr;height:100%;overflow:hidden}
+.login-screen.hidden{display:none}
+.login-left{background:var(--green3);padding:3rem;display:flex;flex-direction:column;justify-content:space-between}
+.login-brand{font-family:'Playfair Display',serif;font-size:2rem;color:#fff;margin-bottom:.35rem}
+.login-sub-lbl{color:rgba(255,255,255,.4);font-size:.84rem;margin-bottom:2rem}
+.login-chips{display:flex;flex-direction:column;gap:.7rem;margin-bottom:auto}
+.login-chip{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:.8rem 1rem}
+.login-chip strong{display:block;color:var(--gold);font-size:.78rem;margin-bottom:.15rem}
+.login-chip span{color:rgba(255,255,255,.5);font-size:.75rem;line-height:1.5}
+.login-quote{border-left:2px solid var(--gold);padding-left:1rem;margin-top:2rem}
+.login-quote p{font-family:'Playfair Display',serif;font-size:.92rem;font-style:italic;color:rgba(255,255,255,.72);line-height:1.6;margin-bottom:.3rem}
+.login-quote span{color:rgba(255,255,255,.3);font-size:.72rem}
+.login-right{padding:2.5rem 2rem;display:flex;flex-direction:column;justify-content:center;background:var(--white);overflow-y:auto}
+.login-right h2{font-size:1.25rem;font-weight:800;margin-bottom:.25rem}
+.login-right > p{color:var(--muted);font-size:.82rem;margin-bottom:1.4rem}
+.tabs{display:flex;background:#F3EFE8;border-radius:8px;padding:3px;margin-bottom:1.1rem}
+.tab-btn{flex:1;padding:.45rem;border:none;background:transparent;border-radius:6px;font-family:inherit;font-weight:600;font-size:.8rem;color:var(--muted);cursor:pointer;transition:all .2s}
+.tab-btn.active{background:var(--white);color:var(--green);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.field{margin-bottom:.75rem}
+.field label{display:block;font-size:.67rem;font-weight:700;color:var(--muted);margin-bottom:.25rem;text-transform:uppercase;letter-spacing:.05em}
+.field input,.field select{width:100%;padding:.56rem .8rem;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.86rem;color:var(--dark);background:var(--white);outline:none;transition:border-color .2s}
+.field input:focus,.field select:focus{border-color:var(--green)}
+.chip-group{display:flex;flex-wrap:wrap;gap:.32rem;margin-top:.3rem}
+.chip{padding:.27rem .68rem;border-radius:6px;border:1.5px solid var(--border);font-size:.74rem;font-weight:600;cursor:pointer;transition:all .2s;background:var(--white);color:var(--muted)}
+.chip.selected{background:var(--green);border-color:var(--green);color:#fff}
+.reg-steps{display:flex;align-items:center;gap:.32rem;margin-bottom:1rem}
+.rs{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.71rem;font-weight:700;transition:all .2s}
+.rs.done{background:var(--green);color:#fff}.rs.active{background:var(--gold);color:var(--dark)}.rs.pending{background:var(--border);color:var(--muted)}
+.rs-line{flex:1;height:1.5px;background:var(--border);border-radius:99px}.rs-line.done{background:var(--green)}
+.login-err{background:#FEF0EC;border:1px solid #F5C6B8;color:#C94B1F;border-radius:7px;padding:.55rem .8rem;font-size:.76rem;font-weight:600;margin-bottom:.65rem;display:none}
+.login-err.show{display:block}
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(12px);background:var(--dark);color:#fff;padding:.55rem 1.15rem;border-radius:7px;font-size:.78rem;font-weight:600;opacity:0;transition:all .3s;z-index:9999;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@keyframes mfade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:768px){body{overflow:auto}.app-body{grid-template-columns:1fr}.sidebar{display:none}.login-screen{grid-template-columns:1fr}.login-left{display:none}.stats-row,.host-cards-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="topbar-logo" href="index.html">KoraWay <span class="topbar-badge">Boston</span></a>
+  <a class="topbar-back" href="index.html">Back to site</a>
+</div>
+
+<div class="modal-overlay hidden" id="host-modal">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <h3 id="host-modal-title">Host Profile</h3>
+      <button class="modal-close" onclick="closeHostModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body" id="host-modal-body"></div>
+  </div>
+</div>
+
+<div class="app-body" id="app-body" style="display:none">
+  <div class="sidebar">
+    <div class="sidebar-user">
+      <div class="su-photo" id="sb-photo"></div>
+      <div class="su-name" id="sb-name"></div>
+      <div class="su-role">Student &middot; Boston</div>
+      <div class="su-pill" id="sb-country"></div>
+    </div>
+    <div class="sidebar-nav">
+      <div class="s-section">Main</div>
+      <a class="s-item active" id="sn-dashboard" onclick="showPage('dashboard')">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Dashboard
+      </a>
+      <a class="s-item" id="sn-plan" onclick="showPage('plan')">
+        <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>My Arrival Plan
+        <span class="s-badge" id="plan-badge" style="display:none">New</span>
+      </a>
+      <a class="s-item" id="sn-ask" onclick="showPage('ask')">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Ask AI
+      </a>
+      <div class="s-section">Account</div>
+      <a class="s-item" id="sn-profile" onclick="showPage('profile')">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>My Profile
+      </a>
+    </div>
+    <div class="sidebar-footer">
+      <button class="s-logout" onclick="doLogout()">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out
+      </button>
+    </div>
+  </div>
+  <div class="main">
+    <div class="main-topbar"><div class="main-title" id="main-title">Dashboard</div></div>
+    <div class="main-content">
+      <div id="page-dashboard"></div>
+      <div id="page-plan"    style="display:none"></div>
+      <div id="page-ask"     style="display:none"></div>
+      <div id="page-profile" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<div class="login-screen" id="screen-login">
+  <div class="login-left">
+    <div>
+      <div class="login-brand">KoraWay</div>
+      <div class="login-sub-lbl">Student App &middot; Boston Pilot</div>
+      <div class="login-chips">
+        <div class="login-chip"><strong>AI Host Matching</strong><span>Claude scores every host against your profile and ranks your top matches with reasoning, pros, and cons</span></div>
+        <div class="login-chip"><strong>Shared Arrival Plan</strong><span>Your host builds a 4-week AI plan for you. Comment on tasks, ask questions, track progress together.</span></div>
+        <div class="login-chip"><strong>Ask AI Anything</strong><span>Claude knows your profile, school, and needs. Ask about banking, housing, campus life — anything.</span></div>
+      </div>
+    </div>
+    <div class="login-quote"><p>"The first two weeks determine the next four years."</p><span>KoraWay product thesis</span></div>
+  </div>
+  <div class="login-right">
+    <h2>Student Sign In</h2>
+    <p>Boston pilot &middot; Student accounts</p>
+    <button class="btn btn-gold btn-md" style="width:100%;margin-bottom:1rem" onclick="startDemo()">&#9654; Start Student Demo</button>
+    <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem"><div style="flex:1;height:1px;background:var(--border)"></div><span style="font-size:.72rem;color:var(--muted)">or sign in manually</span><div style="flex:1;height:1px;background:var(--border)"></div></div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('login')">Sign In</button>
+      <button class="tab-btn" onclick="switchTab('register')">Create Account</button>
+    </div>
+    <div id="tab-login">
+      <div class="login-err" id="login-err">Invalid email or password.</div>
+      <div class="field"><label>Email</label><input type="email" id="l-email" placeholder="aminata@example.com" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+      <div class="field"><label>Password</label><input type="password" id="l-pw" placeholder="demo123" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+      <p style="font-size:.73rem;color:var(--muted);margin-bottom:.75rem">Demo: <strong>aminata@example.com</strong> / demo123</p>
+      <button class="btn btn-green btn-md" style="width:100%" onclick="doLogin()">Sign In</button>
+      <div style="margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center">
+        <p style="font-size:.78rem;color:var(--muted);margin-bottom:.5rem">Are you a host family?</p>
+        <a href="host.html" style="display:inline-flex;align-items:center;gap:.4rem;background:var(--ivory);border:1.5px solid var(--border);border-radius:7px;padding:.48rem 1.1rem;font-size:.8rem;font-weight:600;color:var(--green);text-decoration:none">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Go to Host Dashboard
+        </a>
+      </div>
+    </div>
+    <div id="tab-register" style="display:none">
+      <div class="reg-steps"><div class="rs active" id="rs1">1</div><div class="rs-line" id="rl1"></div><div class="rs pending" id="rs2">2</div></div>
+      <div class="login-err" id="reg-err"></div>
+      <div id="reg-step1">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem">
+          <div class="field"><label>First Name</label><input id="r-fn" placeholder="Aminata"/></div>
+          <div class="field"><label>Last Name</label><input id="r-ln" placeholder="Diallo"/></div>
+        </div>
+        <div class="field"><label>Email</label><input type="email" id="r-email"/></div>
+        <div class="field"><label>Password</label><input type="password" id="r-pw" placeholder="min 6 chars"/></div>
+        <button class="btn btn-green btn-md" style="width:100%" onclick="regNext()">Continue</button>
+      </div>
+      <div id="reg-step2" style="display:none">
+        <div class="field"><label>Country of Origin</label><select id="r-country"><option>Senegal</option><option>Mali</option><option>Gambia</option><option>Guinea</option><option>Cote d'Ivoire</option></select></div>
+        <div class="field"><label>Primary Language</label><select id="r-lang"><option>French</option><option>English</option><option>Wolof</option><option>Bambara</option></select></div>
+        <div class="field"><label>School in Boston</label><select id="r-school"><option>Northeastern University</option><option>Boston University</option><option>Harvard University</option><option>MIT</option><option>Boston College</option><option>UMass Boston</option></select></div>
+        <div class="field"><label>Arrival Window</label><select id="r-arrival"><option>Summer Break</option><option>Weekdays</option><option>Weekends</option><option>Holidays</option></select></div>
+        <div class="field"><label>Support Needs</label>
+          <div class="chip-group" id="needs-chips">
+            <span class="chip" onclick="toggleChip(this)">Housing</span>
+            <span class="chip" onclick="toggleChip(this)">Banking</span>
+            <span class="chip" onclick="toggleChip(this)">Academic</span>
+            <span class="chip" onclick="toggleChip(this)">Culture</span>
+            <span class="chip" onclick="toggleChip(this)">Language</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:.5rem">
+          <button class="btn btn-ghost btn-md" onclick="regBack()">Back</button>
+          <button class="btn btn-green btn-md" style="flex:1" onclick="regSubmit()">Create Account</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var WEEK_COLORS  = ['#22C55E','#F0A500','#7C3AED','#3B82F6'];
+var CAT_TAGS     = {Housing:'tag-gold',Banking:'tag-green',Academic:'tag-purple',Culture:'tag-gold',Language:'tag-green',Social:'tag-ivory'};
+var selectedNeeds = [];
+var askHistory    = [];
+var _pollInterval = null;
+
+var DEMO_REVIEWS = {
+  'oumar@example.com': [
+    {name:'Fatou Sow',country:'Senegal',stars:5,text:'Oumar felt like family from day one. He took me to open my bank account the morning after I arrived and walked me through the entire MBTA system. I would not have survived the first two weeks without him.'},
+    {name:'Mariama Balde',country:'Guinea',stars:5,text:'Speaking French with Oumar made such a difference. He understood exactly what I was going through culturally. His neighbourhood is perfect for international students.'},
+    {name:'Cheikh Diouf',country:'Senegal',stars:4,text:'Very organised host. He had a whole plan ready for my first week. The house can get busy, but it always felt welcoming.'}
+  ],
+  'marie@example.com': [
+    {name:'Adja Toure',country:'Senegal',stars:5,text:'Marie is incredibly experienced. She knows exactly what international students need and was patient with my French. She helped me navigate the housing search better than anyone.'},
+    {name:'Ibrahim Keita',country:'Mali',stars:4,text:'Great host, very close to Northeastern. Marie was supportive and made sure I knew where everything was in the city within the first week.'},
+    {name:'Rokhaya Diallo',country:'Senegal',stars:5,text:'I felt so comfortable with Marie. She is warm, organised, and genuinely invested in your success as a student.'}
+  ],
+  'samba@example.com': [
+    {name:'Moussa Coulibaly',country:'Mali',stars:5,text:'Samba speaks fluent Bambara and that alone meant the world to me. He helped me open a bank account and explained the academic system in a way that finally made sense.'},
+    {name:'Aminata Keita',country:'Mali',stars:5,text:'The best decision I made was choosing Samba as my host. He knows Boston inside out and his family made me feel at home immediately.'},
+    {name:'Djeneba Traore',country:'Mali',stars:4,text:'Very supportive. Samba was particularly helpful with academic orientation and language practice. Highly recommend for Bambara-speaking students.'}
+  ]
+};
+
+var DEMO_PROS_CONS = {
+  'oumar@example.com': {
+    pros:['Senegalese background creates immediate cultural common ground','Fluent in French, Wolof, and English — your primary language fully covered','Roxbury, Boston — 10 minutes from Harvard, well-connected by transit','Covers all four of your support needs: Housing, Banking, Culture, Academic','Highest-rated host in the Boston cohort at 4.9 stars'],
+    cons:['Only available during Summer Break and Holidays — limited off-season access','Home can be busy with two rooms in active use','High demand — other students may also request him']
+  },
+  'marie@example.com': {
+    pros:['Mission Hill, Boston — 5-minute walk from Northeastern campus','French-speaking — strong language match for Francophone students','Experienced with 4+ previous international students','Specialises in housing search and cultural orientation'],
+    cons:['Only one spare room — less flexibility if plans change','Not available on Weekdays','Does not speak Wolof — some cultural nuance may be harder to share']
+  },
+  'samba@example.com': {
+    pros:['Fluent Bambara and French — broadest language coverage of any host','Malian family in Dorchester, Boston — deep West African cultural familiarity','Available Weekdays, Weekends, and Summer Break — most flexible schedule','Strong in Banking, Language coaching, and Academic orientation'],
+    cons:['Dorchester location is slightly further from Northeastern than other hosts','Best suited to Bambara-speaking students from Mali and Guinea','Less specific experience with Housing search compared to other hosts']
+  }
+};
+
+var users           = JSON.parse(localStorage.getItem('kw_users')            || '[]');
+var hostRequests    = JSON.parse(localStorage.getItem('kw_requests')         || '{}');
+var accepted        = JSON.parse(localStorage.getItem('kw_accepted')         || '{}');
+var plans           = JSON.parse(localStorage.getItem('kw_plans')            || '{}');
+var planChecks      = JSON.parse(localStorage.getItem('kw_plan_checks')      || '{}');
+var planComments    = JSON.parse(localStorage.getItem('kw_plan_comments')    || '{}');
+var aiScores        = JSON.parse(localStorage.getItem('kw_scores')           || '{}');
+var aiReasons       = JSON.parse(localStorage.getItem('kw_reasons')          || '{}');
+var aiFullReasons   = JSON.parse(localStorage.getItem('kw_full_reasons')     || '{}');
+var studentProfiles = JSON.parse(localStorage.getItem('kw_student_profiles') || '{}');
+var chatMsgs        = JSON.parse(localStorage.getItem('kw_chat_msgs')        || '{}');
+var seenAccepted    = JSON.parse(localStorage.getItem('kw_seen_accepted')    || '{}');
+var currentUser     = JSON.parse(localStorage.getItem('kw_current')          || 'null');
+
+if (!users.length) {
+  users = [
+    {type:'Student',first_name:'Aminata',last_name:'Diallo',email:'aminata@example.com',password:'demo123',city:'Boston',needs:['Housing','Banking','Culture'],language:'French',arrival_period:'Summer Break',country:'Senegal',school:'Northeastern University',bio:'My name is Aminata. I am from Senegal, where I attended Lamine Gueye High School in Dakar. I will be studying Public Health at Northeastern University starting this fall. I am passionate about community health and excited to experience Boston, though I am nervous about the banking system, finding housing, and settling into a new culture far from home.'},
+    {type:'Student',first_name:'Ibrahima',last_name:'Coulibaly',email:'ibrahima@example.com',password:'demo123',city:'Boston',needs:['Academic','Language','Banking'],language:'Bambara',arrival_period:'Weekdays',country:'Mali',school:'Boston University',bio:'Engineering student from Bamako. First time in the US. Needs help navigating academic systems.'},
+    {type:'Host Family',first_name:'Oumar',last_name:'Ndiaye',email:'oumar@example.com',password:'demo123',city:'Boston',availability:['Summer Break','Holidays'],support_areas:['Banking','Academic','Culture','Housing'],languages_spoken:['French','Wolof','English'],home_details:'Senegalese family, Roxbury — 10 min from Harvard, 2 private rooms, home-cooked meals',rating:4.9},
+    {type:'Host Family',first_name:'Marie',last_name:'Fontaine',email:'marie@example.com',password:'demo123',city:'Boston',availability:['Summer Break','Weekends'],support_areas:['Housing','Culture','Banking'],languages_spoken:['French','English'],home_details:'Mission Hill, Boston — 5 min walk from Northeastern, 1 spare room, transit-friendly',rating:4.7},
+    {type:'Host Family',first_name:'Samba',last_name:'Traore',email:'samba@example.com',password:'demo123',city:'Boston',availability:['Weekdays','Weekends','Summer Break'],support_areas:['Banking','Language','Academic','Culture'],languages_spoken:['French','Bambara','English'],home_details:'Malian family, Dorchester, Boston — near UMass Boston, 1 spare room, fluent Bambara and French',rating:4.8}
+  ];
+  localStorage.setItem('kw_users', JSON.stringify(users));
+}
+
+if (aiScores['aminata@example.com_oumar@example.com'] === undefined) {
+  aiScores['aminata@example.com_oumar@example.com'] = 98;
+  aiReasons['aminata@example.com_oumar@example.com'] = 'Senegalese host, fluent French — perfect cultural and language match.';
+  localStorage.setItem('kw_scores',  JSON.stringify(aiScores));
+  localStorage.setItem('kw_reasons', JSON.stringify(aiReasons));
+}
+
+if (!studentProfiles['aminata@example.com']) {
+  studentProfiles['aminata@example.com'] = {
+    bio:'My name is Aminata. I am from Senegal, where I attended Lamine Gueye High School in Dakar. I will be studying Public Health at Northeastern University starting this fall. I am passionate about community health and excited to experience Boston, though I am nervous about the banking system, finding housing, and settling into a new culture far from home.',
+    photo:null
+  };
+  localStorage.setItem('kw_student_profiles', JSON.stringify(studentProfiles));
+}
+
+function save() {
+  localStorage.setItem('kw_users',            JSON.stringify(users));
+  localStorage.setItem('kw_requests',         JSON.stringify(hostRequests));
+  localStorage.setItem('kw_accepted',         JSON.stringify(accepted));
+  localStorage.setItem('kw_plans',            JSON.stringify(plans));
+  localStorage.setItem('kw_plan_checks',      JSON.stringify(planChecks));
+  localStorage.setItem('kw_plan_comments',    JSON.stringify(planComments));
+  localStorage.setItem('kw_scores',           JSON.stringify(aiScores));
+  localStorage.setItem('kw_reasons',          JSON.stringify(aiReasons));
+  localStorage.setItem('kw_full_reasons',     JSON.stringify(aiFullReasons));
+  localStorage.setItem('kw_student_profiles', JSON.stringify(studentProfiles));
+  localStorage.setItem('kw_chat_msgs',        JSON.stringify(chatMsgs));
+  localStorage.setItem('kw_seen_accepted',    JSON.stringify(seenAccepted));
+}
+
+function gi(u) { return (u.first_name[0] + (u.last_name ? u.last_name[0] : '')).toUpperCase(); }
+function showToast(m) { var t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(function() { t.classList.remove('show'); }, 2800); }
+function findUser(e) { for (var i = 0; i < users.length; i++) { if (users[i].email === e) return users[i]; } return null; }
+function getHosts() { return users.filter(function(u) { return u.type === 'Host Family'; }); }
+function getMyHost() {
+  if (accepted[currentUser.email]) return findUser(accepted[currentUser.email]);
+  if (hostRequests[currentUser.email]) return findUser(hostRequests[currentUser.email]);
+  return null;
+}
+function getMyPlan() {
+  var h = findUser(accepted[currentUser.email]);
+  if (!h) return null;
+  return plans[h.email + '_' + currentUser.email] || null;
+}
+
+function callClaude(messages, system, max_tokens) {
+  return fetch('/api/chat', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({messages: messages, system: system || '', max_tokens: max_tokens || 500})
+  }).then(function(r) { return r.json(); }).then(function(d) { return d.text || null; }).catch(function() { return null; });
+}
+
+function switchTab(t) {
+  document.querySelectorAll('.tab-btn').forEach(function(b, i) { b.classList.toggle('active', i === (t === 'login' ? 0 : 1)); });
+  document.getElementById('tab-login').style.display    = t === 'login'    ? 'block' : 'none';
+  document.getElementById('tab-register').style.display = t === 'register' ? 'block' : 'none';
+}
+function toggleChip(el) {
+  var v = el.textContent.trim();
+  if (el.classList.contains('selected')) { el.classList.remove('selected'); selectedNeeds = selectedNeeds.filter(function(x) { return x !== v; }); }
+  else { el.classList.add('selected'); selectedNeeds.push(v); }
+}
+function startDemo() {
+  var keys = Object.keys(localStorage);
+  for (var i = 0; i < keys.length; i++) { if (keys[i].startsWith('kw_')) localStorage.removeItem(keys[i]); }
+  localStorage.setItem('kw_demo_autostart', 'student');
+  location.reload();
+}
+
+function doLogin() {
+  var email = document.getElementById('l-email').value.trim().toLowerCase();
+  var pw    = document.getElementById('l-pw').value.trim();
+  var user  = findUser(email);
+  var errEl = document.getElementById('login-err');
+  if (!user || user.password !== pw || user.type !== 'Student') { errEl.classList.add('show'); return; }
+  errEl.classList.remove('show');
+  currentUser = user;
+  localStorage.setItem('kw_current', JSON.stringify(user));
+  launchApp();
+}
+function regNext() {
+  var fn = document.getElementById('r-fn').value.trim();
+  var ln = document.getElementById('r-ln').value.trim();
+  var em = document.getElementById('r-email').value.trim();
+  var pw = document.getElementById('r-pw').value.trim();
+  var err = document.getElementById('reg-err');
+  if (!fn || !ln || !em || !pw) { err.textContent = 'Please fill in all fields.'; err.classList.add('show'); return; }
+  if (findUser(em.toLowerCase())) { err.textContent = 'Email already registered.'; err.classList.add('show'); return; }
+  err.classList.remove('show');
+  document.getElementById('reg-step1').style.display = 'none';
+  document.getElementById('reg-step2').style.display = 'block';
+  document.getElementById('rs1').className = 'rs done';
+  document.getElementById('rl1').classList.add('done');
+  document.getElementById('rs2').className = 'rs active';
+}
+function regBack() {
+  document.getElementById('reg-step1').style.display = 'block';
+  document.getElementById('reg-step2').style.display = 'none';
+  document.getElementById('rs1').className = 'rs active';
+  document.getElementById('rl1').classList.remove('done');
+  document.getElementById('rs2').className = 'rs pending';
+}
+function regSubmit() {
+  if (!selectedNeeds.length) { showToast('Select at least one support need'); return; }
+  var user = {
+    type: 'Student',
+    first_name: document.getElementById('r-fn').value.trim(),
+    last_name:  document.getElementById('r-ln').value.trim(),
+    email:      document.getElementById('r-email').value.trim().toLowerCase(),
+    password:   document.getElementById('r-pw').value.trim(),
+    city: 'Boston',
+    country:        document.getElementById('r-country').value,
+    language:       document.getElementById('r-lang').value,
+    school:         document.getElementById('r-school').value,
+    arrival_period: document.getElementById('r-arrival').value,
+    needs: selectedNeeds.slice()
+  };
+  users.push(user);
+  currentUser = user;
+  localStorage.setItem('kw_current', JSON.stringify(user));
+  save();
+  launchApp();
+}
+function doLogout() { currentUser = null; localStorage.removeItem('kw_current'); location.reload(); }
+
+function launchApp() {
+  document.getElementById('screen-login').style.display = 'none';
+  document.getElementById('app-body').style.display = 'grid';
+  var prof = studentProfiles[currentUser.email] || {};
+  var sbp  = document.getElementById('sb-photo');
+  sbp.innerHTML = prof.photo ? '<img src="' + prof.photo + '" alt=""/>' : gi(currentUser);
+  document.getElementById('sb-name').textContent    = currentUser.first_name + ' ' + currentUser.last_name;
+  document.getElementById('sb-country').textContent = currentUser.country || 'Boston';
+  updatePlanBadge();
+  scoreAllHosts();
+  startPolling();
+  _lastStudentSnapshot = (localStorage.getItem('kw_plan_comments') || '{}') + (localStorage.getItem('kw_chat_msgs') || '{}');
+  startStudentPolling();
+  showPage('dashboard');
+}
+
+function updatePlanBadge() {
+  var badge = document.getElementById('plan-badge');
+  if (!badge) return;
+  var plan = getMyPlan();
+  var host = findUser(accepted[currentUser.email]);
+  var unread = 0;
+  if (host) {
+    var ckey = host.email + '_' + currentUser.email;
+    var msgs = chatMsgs[ckey] || [];
+    var lastSeen = parseInt(localStorage.getItem('kw_msg_seen_' + ckey) || '0');
+    for (var i = 0; i < msgs.length; i++) { if (msgs[i].from === 'host' && (msgs[i].ts || 0) > lastSeen) unread++; }
+  }
+  if (plan || unread > 0) {
+    badge.style.display = '';
+    badge.textContent = unread > 0 ? unread : 'New';
+    badge.style.background = unread > 0 ? '#EF4444' : 'var(--gold)';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function startPolling() {
+  if (_pollInterval) return;
+  _pollInterval = setInterval(function() {
+    if (!currentUser) return;
+    if (accepted[currentUser.email]) { stopPolling(); return; }
+    var fresh = JSON.parse(localStorage.getItem('kw_accepted') || '{}');
+    if (fresh[currentUser.email] && !seenAccepted[currentUser.email]) {
+      accepted = fresh;
+      stopPolling();
+      if (document.getElementById('page-dashboard').style.display !== 'none') {
+        renderDashboard();
+      } else {
+        var h = findUser(accepted[currentUser.email]);
+        if (h) showToast(h.first_name + ' accepted you — view your arrival plan');
+      }
+      updatePlanBadge();
+    }
+  }, 3000);
+}
+function stopPolling() { if (_pollInterval) { clearInterval(_pollInterval); _pollInterval = null; } }
+
+var _studentPollInterval = null;
+var _lastStudentSnapshot = '';
+
+function startStudentPolling() {
+  if (_studentPollInterval) return;
+  _studentPollInterval = setInterval(function() {
+    if (!currentUser) return;
+    var freshComments = localStorage.getItem('kw_plan_comments') || '{}';
+    var freshChats    = localStorage.getItem('kw_chat_msgs')     || '{}';
+    var snapshot = freshComments + freshChats;
+    if (snapshot !== _lastStudentSnapshot) {
+      _lastStudentSnapshot = snapshot;
+      planComments = JSON.parse(freshComments);
+      chatMsgs     = JSON.parse(freshChats);
+      if (document.getElementById('page-plan').style.display !== 'none') renderPlan();
+      updatePlanBadge();
+    }
+  }, 3000);
+}
+
+function checkAcceptedBanner() {
+  accepted = JSON.parse(localStorage.getItem('kw_accepted') || '{}');
+  if (accepted[currentUser.email] && !seenAccepted[currentUser.email]) {
+    return accepted[currentUser.email];
+  }
+  return null;
+}
+function markBannerSeen() { seenAccepted[currentUser.email] = true; save(); }
+
+function scoreAllHosts() {
+  var hosts = getHosts();
+  var u = currentUser;
+  for (var i = 0; i < hosts.length; i++) {
+    (function(host) {
+      var key = u.email + '_' + host.email;
+      if (aiScores[key] !== undefined) return;
+      var system = 'You are KoraWay matching engine. Score compatibility 0-100. Language match 30pts, cultural overlap 25pts, support area coverage 25pts, availability alignment 20pts. Return ONLY valid JSON: {"score":<number>,"reason":"<12 words max>"}. No markdown.';
+      var prompt = 'Student: ' + u.first_name + ' from ' + u.country + ', speaks ' + u.language + ', needs [' + u.needs.join(', ') + '], arriving ' + u.arrival_period + ', school: ' + (u.school || 'Boston university') + '. Host: ' + host.first_name + ' ' + host.last_name + ', speaks [' + host.languages_spoken.join(', ') + '], supports [' + host.support_areas.join(', ') + '], available [' + host.availability.join(', ') + '].';
+      callClaude([{role:'user', content:prompt}], system, 80).then(function(result) {
+        var parsed = {score: 0, reason: 'Profile analysed.'};
+        if (result) {
+          try { parsed = JSON.parse(result.replace(/```json|```/g, '').trim()); } catch(e) {
+            var m = result.match(/\d{1,3}/); if (m) parsed.score = Math.min(100, parseInt(m[0]));
+          }
+        } else {
+          var s = 0;
+          if (host.languages_spoken.indexOf(u.language) > -1) s += 30;
+          for (var ni = 0; ni < u.needs.length; ni++) { if (host.support_areas.indexOf(u.needs[ni]) > -1) s += 6; }
+          if (host.availability.indexOf(u.arrival_period) > -1) s += 20;
+          parsed = {score: Math.min(s, 100), reason: 'Language and support areas align with needs.'};
+        }
+        aiScores[key] = parsed.score;
+        aiReasons[key] = parsed.reason;
+        save();
+        if (document.getElementById('page-dashboard').style.display !== 'none') renderDashboard();
+      });
+    })(hosts[i]);
+  }
+}
+
+function getFullReason(host, u, callback) {
+  var key = u.email + '_' + host.email;
+  if (aiFullReasons[key]) { callback(aiFullReasons[key]); return; }
+  var system = 'You are KoraWay AI. Write a 3-4 sentence personalised explanation of why this host is a strong match for this student. Be specific about language, cultural familiarity, location, and support areas. Be warm and direct.';
+  var prompt = 'Student: ' + u.first_name + ' from ' + u.country + ', speaks ' + u.language + ', needs: ' + u.needs.join(', ') + ', arriving ' + u.arrival_period + ', attending ' + (u.school || 'Boston university') + '. Host: ' + host.first_name + ' ' + host.last_name + ', speaks ' + host.languages_spoken.join(', ') + ', supports ' + host.support_areas.join(', ') + ', rating: ' + (host.rating || 4.8) + '.';
+  callClaude([{role:'user', content:prompt}], system, 200).then(function(result) {
+    var r = result || 'This host aligns strongly with your language, cultural background, and support needs.';
+    aiFullReasons[key] = r; save(); callback(r);
+  });
+}
+
+function showPage(p) {
+  ['dashboard','plan','ask','profile'].forEach(function(pg) {
+    document.getElementById('page-' + pg).style.display = 'none';
+    var sn = document.getElementById('sn-' + pg); if (sn) sn.classList.remove('active');
+  });
+  document.getElementById('page-' + p).style.display = 'block';
+  var sn = document.getElementById('sn-' + p); if (sn) sn.classList.add('active');
+  var titles = {dashboard:'Dashboard', plan:'My Arrival Plan', ask:'Ask AI', profile:'My Profile'};
+  document.getElementById('main-title').textContent = titles[p] || '';
+  if (p === 'dashboard') renderDashboard();
+  if (p === 'plan')      renderPlan();
+  if (p === 'ask')       renderAsk();
+  if (p === 'profile')   renderProfile();
+}
+
+function renderDashboard() {
+  var u        = currentUser;
+  var hosts    = getHosts();
+  var myHost   = getMyHost();
+  var plan     = getMyPlan();
+  var planDone = 0, planTotal = 0;
+  if (plan) {
+    for (var wi = 0; wi < plan.weeks.length; wi++) {
+      for (var ti = 0; ti < plan.weeks[wi].tasks.length; ti++) {
+        planTotal++;
+        if (planChecks[(accepted[u.email] || '') + '_' + u.email + '_' + plan.weeks[wi].tasks[ti].id]) planDone++;
+      }
+    }
+  }
+  var scored = hosts.slice().sort(function(a, b) {
+    var sa = aiScores[u.email + '_' + a.email] || 0;
+    var sb = aiScores[u.email + '_' + b.email] || 0;
+    return sb - sa;
+  });
+  var newlyAccepted = checkAcceptedBanner();
+  var html = '';
+
+  if (newlyAccepted) {
+    var ah = findUser(newlyAccepted);
+    if (ah) {
+      html += '<div class="accepted-banner">'
+        + '<div style="display:flex;align-items:center;gap:.85rem">'
+          + '<div style="width:36px;height:36px;border-radius:50%;background:rgba(74,222,128,.2);border:2px solid rgba(74,222,128,.4);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">&#x2713;</div>'
+          + '<div><strong>' + ah.first_name + ' ' + ah.last_name + ' has accepted you!</strong><p>Your 4-week AI arrival plan is ready.</p></div>'
+        + '</div>'
+        + '<button class="btn btn-gold btn-sm" onclick="showPage(\'plan\')">View Your Plan</button>'
+        + '</div>';
+    }
+  }
+
+  html += '<div class="banner"><div><h2>Welcome, ' + u.first_name + '</h2><p>' + scored.length + ' AI-scored hosts &middot; ' + u.school + ' &middot; ' + u.arrival_period + '</p></div><div class="banner-badge">' + u.country + ' &middot; ' + u.language + '</div></div>';
+  html += '<div class="stats-row">';
+  html += '<div class="stat-c"><div class="stat-c-val">' + scored.length + '</div><div class="stat-c-lbl">Host Matches</div><div class="stat-c-sub">AI-scored &middot; Boston</div></div>';
+  html += '<div class="stat-c"><div class="stat-c-val">' + (myHost ? myHost.first_name : '&mdash;') + '</div><div class="stat-c-lbl">My Host</div><div class="stat-c-sub">' + (accepted[u.email] ? 'Accepted &amp; plan ready' : hostRequests[u.email] ? 'Request sent' : 'Not yet selected') + '</div></div>';
+  html += '<div class="stat-c"><div class="stat-c-val">' + planDone + '/' + planTotal + '</div><div class="stat-c-lbl">Plan Tasks</div><div class="stat-c-sub">Arrival plan progress</div></div>';
+  html += '</div>';
+
+  if (!accepted[u.email] && hostRequests[u.email] === 'oumar@example.com') {
+    html += '<div style="background:rgba(240,165,0,.08);border:1.5px dashed rgba(240,165,0,.4);border-radius:10px;padding:.85rem 1.1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.25rem">'
+      + '<div><div style="font-size:.82rem;font-weight:700;color:var(--dark);margin-bottom:.1rem">Request sent to Oumar</div><div style="font-size:.75rem;color:var(--muted)">Simulate Oumar accepting to experience the full arrival plan flow</div></div>'
+      + '<button class="btn btn-gold btn-sm" onclick="simulateHostAccept()">Simulate Host Accept</button>'
+      + '</div>';
+  }
+
+  html += '<div class="content-hdr"><h3>AI-Scored Host Families</h3><span style="font-size:.75rem;color:var(--muted)">Ranked by AI &middot; highest first</span></div>';
+
+  if (!accepted[u.email] && !hostRequests[u.email]) {
+    html += '<div style="background:linear-gradient(135deg,rgba(27,107,58,.06),rgba(240,165,0,.06));border:1.5px solid rgba(27,107,58,.2);border-radius:12px;padding:1.1rem 1.25rem;display:flex;align-items:center;gap:.85rem;margin-bottom:1rem">'
+      + '<div style="width:36px;height:36px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">&#9733;</div>'
+      + '<div style="flex:1"><div style="font-size:.84rem;font-weight:700;margin-bottom:.1rem">Start by requesting a host</div><div style="font-size:.76rem;color:var(--muted)">Oumar is your #1 AI match — request him to begin your arrival journey</div></div>'
+      + '<button class="btn btn-green btn-sm" onclick="requestHost(\'oumar@example.com\')">Request Oumar</button>'
+      + '</div>';
+  }
+  html += '<div class="host-cards-grid">';
+  for (var i = 0; i < scored.length; i++) { html += buildHostCard(scored[i], i, u); }
+  html += '</div>';
+
+  document.getElementById('page-dashboard').innerHTML = html;
+  if (newlyAccepted) { setTimeout(markBannerSeen, 100); updatePlanBadge(); }
+}
+
+function buildHostCard(host, rank, u) {
+  var key        = u.email + '_' + host.email;
+  var score      = aiScores[key];
+  var reason     = aiReasons[key] || '';
+  var isAccepted = accepted[u.email] === host.email;
+  var isRequested= hostRequests[u.email] === host.email;
+  var isDemo     = host.email === 'oumar@example.com';
+  var tags = ''; for (var i = 0; i < host.support_areas.length; i++) tags += '<span class="tag tag-ivory">' + host.support_areas[i] + '</span>';
+  var langs = ''; for (var i = 0; i < host.languages_spoken.length; i++) langs += '<span class="tag tag-green">' + host.languages_spoken[i] + '</span>';
+  var scoreHtml = score !== undefined ? '<div class="host-score-badge' + (score >= 75 ? ' high' : '') + '">' + score + '/100</div>' : '<div class="host-score-badge"><span class="ai-dot"></span></div>';
+  var rankLabel  = rank === 0 ? '#1 Match' : rank === 1 ? '#2 Match' : '#3 Match';
+  var topLeft    = isAccepted ? '<div class="selected-ribbon">Accepted</div>' : '<div class="host-rank-badge">' + rankLabel + '</div>';
+  var demoBadge  = isDemo ? '<div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--dark);border-radius:4px;padding:.18rem .6rem;font-size:.62rem;font-weight:700;white-space:nowrap;z-index:1">Demo Host</div>' : '';
+  var snippetHtml = reason ? '<div class="ai-snippet"><div class="ai-snippet-lbl">AI Reasoning</div>' + reason + '</div>' : '<div class="ai-snippet"><div class="ai-snippet-lbl"><span class="ai-dot"></span> Scoring&hellip;</div></div>';
+  var ratingDisplay = '&#9733; ' + host.rating;
+  var footerBtn = '';
+  if (isAccepted) {
+    footerBtn = '<button class="btn btn-sm btn-gold" disabled>Accepted</button>';
+  } else if (isRequested) {
+    footerBtn = '<button class="btn btn-sm btn-ghost" disabled>Request Sent</button>';
+  } else if (isDemo) {
+    footerBtn = '<button class="btn btn-sm btn-green" onclick="requestHost(\'' + host.email + '\')">Request Host</button>';
+  } else {
+    footerBtn = '<button class="btn btn-sm btn-ghost" disabled style="opacity:.5;cursor:not-allowed" title="Not available in this demo — select Oumar to see the full flow">Not in Demo</button>';
+  }
+  var cardOpacity = (!isDemo && !isAccepted) ? ' style="opacity:.75"' : '';
+  return '<div class="host-card' + (isAccepted ? ' selected-card' : '') + '"' + cardOpacity + '>'
+    + '<div class="host-card-hdr">' + topLeft + scoreHtml + demoBadge + '<div class="host-av-circle">' + gi(host) + '</div></div>'
+    + '<div class="host-card-body">'
+      + '<div class="host-name">' + host.first_name + ' ' + host.last_name + '</div>'
+      + '<div class="host-loc">Boston &middot; Vetted host</div>'
+      + '<div class="host-rating">' + ratingDisplay + '</div>'
+      + '<div class="sec-lbl">Expertise</div><div class="tag-row">' + tags + '</div>'
+      + '<div class="sec-lbl">Languages</div><div class="tag-row">' + langs + '</div>'
+      + snippetHtml
+    + '</div>'
+    + '<div class="host-card-footer">' + footerBtn + '<button class="btn btn-sm btn-ghost" onclick="openHostModal(\'' + host.email + '\')">See More</button></div>'
+  + '</div>';
+}
+
+function requestHost(hostEmail) {
+  hostRequests[currentUser.email] = hostEmail;
+  save();
+  var host = findUser(hostEmail);
+  showToast('Request sent to ' + host.first_name + ' — waiting for acceptance');
+  renderDashboard();
+}
+
+function simulateHostAccept() {
+  var u    = currentUser;
+  var host = findUser('oumar@example.com');
+  if (!host) return;
+  accepted[u.email] = host.email;
+  delete hostRequests[u.email];
+  save();
+  var ckey = host.email + '_' + u.email;
+  if (!chatMsgs[ckey]) {
+    chatMsgs[ckey] = [{from:'host', text:'Hi ' + u.first_name + '! I have reviewed your profile and I am excited to welcome you. I speak French, Wolof, and English. I am ready to help.', ts: Date.now() - 120000}];
+    save();
+  }
+  stopPolling();
+  updatePlanBadge();
+  showSimulatedPlanOverlay(host, u);
+}
+
+function showSimulatedPlanOverlay(host, u) {
+  var overlay = document.createElement('div');
+  overlay.id  = 'sim-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(10,46,24,.9);z-index:999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)';
+  var steps = ['Reading your profile','Matching with your host','Building week-by-week tasks','Writing personalised AI tips','Finalising your arrival plan'];
+  var stepsHtml = '';
+  for (var i = 0; i < steps.length; i++) {
+    stepsHtml += '<div id="simstep-' + i + '" style="display:flex;align-items:center;gap:.65rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:.55rem .8rem;transition:all .3s">'
+      + '<div id="simdot-' + i + '" style="width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2);flex-shrink:0"></div>'
+      + '<span style="font-size:.76rem;color:rgba(255,255,255,.4);font-weight:600">' + steps[i] + '</span>'
+      + '</div>';
+  }
+  overlay.innerHTML = '<div style="background:var(--green3);border:1px solid rgba(240,165,0,.25);border-radius:16px;padding:2.5rem;max-width:380px;width:100%;text-align:center">'
+    + '<div style="width:60px;height:60px;border-radius:50%;background:rgba(240,165,0,.12);border:2px solid rgba(240,165,0,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;font-size:1.5rem">&#9733;</div>'
+    + '<div style="color:#fff;font-size:1.1rem;font-weight:700;margin-bottom:.4rem">Oumar accepted your request</div>'
+    + '<div style="color:rgba(255,255,255,.48);font-size:.8rem;margin-bottom:1.5rem">Building your personalised 4-week arrival plan</div>'
+    + '<div style="display:flex;flex-direction:column;gap:.4rem">' + stepsHtml + '</div>'
+    + '</div>';
+  document.body.appendChild(overlay);
+  var planDone = false;
+  generatePlanForStudent(host, u).then(function() { planDone = true; });
+  var delays = [0, 700, 1400, 2200, 3200, 4100];
+  for (var j = 0; j < steps.length; j++) {
+    (function(idx) {
+      setTimeout(function() {
+        var prev    = document.getElementById('simstep-' + (idx - 1));
+        var prevDot = document.getElementById('simdot-'  + (idx - 1));
+        if (prev)    { prev.style.background = 'rgba(27,107,58,.15)'; prev.style.borderColor = 'rgba(27,107,58,.3)'; }
+        if (prevDot) prevDot.style.background = '#4ADE80';
+        var el  = document.getElementById('simstep-' + idx);
+        var dot = document.getElementById('simdot-'  + idx);
+        if (el)  el.style.background = 'rgba(240,165,0,.08)';
+        if (dot) dot.style.background = 'var(--gold)';
+      }, delays[idx]);
+    })(j);
+  }
+  var checkDone = function() {
+    if (planDone) {
+      var last    = document.getElementById('simstep-' + (steps.length - 1));
+      var lastDot = document.getElementById('simdot-'  + (steps.length - 1));
+      if (last)    { last.style.background = 'rgba(27,107,58,.15)'; last.style.borderColor = 'rgba(27,107,58,.3)'; }
+      if (lastDot) lastDot.style.background = '#4ADE80';
+      setTimeout(function() {
+        overlay.remove();
+        renderDashboard();
+        updatePlanBadge();
+      }, 600);
+    } else {
+      setTimeout(checkDone, 300);
+    }
+  };
+  setTimeout(checkDone, delays[steps.length - 1] + 600);
+}
+
+function generatePlanForStudent(host, u) {
+  var key = host.email + '_' + u.email;
+  if (plans[key]) return Promise.resolve(plans[key]);
+  var system = 'You are KoraWay AI. Generate a 4-week arrival support plan. Return ONLY valid JSON no markdown: {"weeks":[{"week":1,"theme":"string","tasks":[{"id":"w1t1","text":"string","category":"Housing|Banking|Academic|Culture|Language|Social","hours":1.5,"aiNote":"string"}]}]}. 4 weeks, 3-4 tasks each. Specific to student country, language, school, and needs.';
+  var prompt = 'Host: ' + host.first_name + ', Boston, speaks ' + (host.languages_spoken || []).join(', ') + '. Student: ' + u.first_name + ' from ' + u.country + ', speaks ' + u.language + ', attending ' + (u.school || 'a Boston university') + ', needs: ' + u.needs.join(', ') + ', arriving ' + u.arrival_period + '.';
+  return callClaude([{role:'user', content:prompt}], system, 900).then(function(result) {
+    var parsed = null;
+    if (result) { try { parsed = JSON.parse(result.replace(/```json|```/g, '').trim()); } catch(e) {} }
+    if (!parsed) {
+      parsed = {weeks:[
+        {week:1,theme:'Arrival & First Steps',tasks:[
+          {id:'w1t1',text:'Meet Oumar on arrival day and settle into the home',category:'Social',hours:2,aiNote:'Start in French — it will put you at ease after a long journey.'},
+          {id:'w1t2',text:'Walk the neighbourhood — MBTA stop, grocery store, pharmacy',category:'Housing',hours:1.5,aiNote:'Ask Oumar about the nearest Senegalese or African grocery stores.'},
+          {id:'w1t3',text:'Open a bank account — bring I-20, passport, proof of enrollment',category:'Banking',hours:2,aiNote:'Chase and Bank of America both accept I-20. Oumar can come with you.'}
+        ]},
+        {week:2,theme:'Campus & Administration',tasks:[
+          {id:'w2t1',text:'Walk the Northeastern campus together',category:'Academic',hours:2.5,aiNote:'Find the international student services office first.'},
+          {id:'w2t2',text:'Get student ID, MBTA pass, and set up university email',category:'Academic',hours:1.5,aiNote:'The student MBTA pass saves significantly — apply in the first week.'},
+          {id:'w2t3',text:'Meet the international student advisor',category:'Academic',hours:1,aiNote:'Oumar can join you to make the introduction easier.'}
+        ]},
+        {week:3,theme:'Community & Culture',tasks:[
+          {id:'w3t1',text:'Visit a local Senegalese or West African community space',category:'Culture',hours:2,aiNote:'The diaspora community in Roxbury and Dorchester is active and welcoming.'},
+          {id:'w3t2',text:'Explore Boston by MBTA — practice the route to Northeastern',category:'Social',hours:2,aiNote:'Do a practice run so the commute feels automatic before classes start.'},
+          {id:'w3t3',text:'Connect with West African student associations at Northeastern',category:'Social',hours:1,aiNote:'Check the Northeastern student clubs directory.'}
+        ]},
+        {week:4,theme:'Independence Check-in',tasks:[
+          {id:'w4t1',text:'Review all checklist items with Oumar',category:'Academic',hours:1,aiNote:'Be honest about what still feels uncertain.'},
+          {id:'w4t2',text:'Confirm you can navigate daily life independently',category:'Culture',hours:1.5,aiNote:'Walk Oumar through your typical week — gaps will become clear.'},
+          {id:'w4t3',text:'Celebrate with a Senegalese meal together',category:'Social',hours:2,aiNote:'This marks your transition to independent student life.'}
+        ]}
+      ]};
+    }
+    plans[key] = parsed; save(); return parsed;
+  });
+}
+
+function openHostModal(hostEmail) {
+  var host = findUser(hostEmail); if (!host) return;
+  var u    = currentUser;
+  var key  = u.email + '_' + hostEmail;
+  var score = aiScores[key];
+  var pc    = DEMO_PROS_CONS[hostEmail] || {pros:[], cons:[]};
+  var reviews = DEMO_REVIEWS[hostEmail] || [];
+  document.getElementById('host-modal-title').textContent = host.first_name + ' ' + host.last_name + ' - Full Profile';
+  var prosHtml = ''; for (var i = 0; i < pc.pros.length; i++) prosHtml += '<div class="pc-item"><div class="pc-dot"></div><span>' + pc.pros[i] + '</span></div>';
+  var consHtml = ''; for (var i = 0; i < pc.cons.length; i++) consHtml += '<div class="pc-item"><div class="pc-dot"></div><span>' + pc.cons[i] + '</span></div>';
+  var langsHtml = ''; for (var i = 0; i < host.languages_spoken.length; i++) langsHtml += '<span class="tag tag-green">' + host.languages_spoken[i] + '</span>';
+  var reviewsHtml = '';
+  for (var i = 0; i < reviews.length; i++) {
+    var rv = reviews[i];
+    var stars = '';
+    for (var s = 0; s < rv.stars; s++) stars += '&#9733;';
+    reviewsHtml += '<div class="review-item"><div class="review-header"><div><div class="review-name">' + rv.name + '</div><div class="review-country">' + rv.country + '</div></div><div class="review-stars">' + stars + '</div></div><div class="review-text">' + rv.text + '</div></div>';
+  }
+  var ratingDisplay = '&#9733; ' + host.rating;
+  var isAccepted  = accepted[u.email] === hostEmail;
+  var isRequested = hostRequests[u.email] === hostEmail;
+  var isDemo = hostEmail === 'oumar@example.com';
+  var ctaBtn = '';
+  if (isAccepted) { ctaBtn = '<button class="btn btn-gold btn-md" disabled>Accepted</button>'; }
+  else if (isRequested) { ctaBtn = '<button class="btn btn-ghost btn-md" disabled>Request Sent</button>'; }
+  else if (isDemo) { ctaBtn = '<button class="btn btn-green btn-md" onclick="requestHost(\'' + hostEmail + '\');closeHostModal()">Request This Host</button>'; }
+  else { ctaBtn = '<button class="btn btn-ghost btn-md" disabled style="opacity:.5">Not in Demo</button>'; }
+  document.getElementById('host-modal-body').innerHTML =
+    '<div class="modal-host-hero">'
+      + '<div class="modal-host-av">' + gi(host) + '</div>'
+      + '<div style="flex:1"><div class="modal-host-name">' + host.first_name + ' ' + host.last_name + '</div><div class="modal-host-meta">Boston &middot; ' + host.home_details + '</div><div style="display:flex;flex-wrap:wrap;gap:.3rem">' + langsHtml + '</div></div>'
+      + '<div style="text-align:right"><div class="modal-score-big">' + (score !== undefined ? score : '-') + '</div><div class="modal-score-lbl">/ 100 match</div><div style="font-size:.75rem;color:var(--gold);margin-top:.25rem;font-weight:700">&#9733; ' + host.rating + '</div></div>'
+    + '</div>'
+    + '<div class="section-title-sm">AI Match Reasoning</div>'
+    + '<div class="full-reason-box" id="modal-full-reason"><div style="display:flex;align-items:center;gap:.5rem;color:var(--muted);font-size:.8rem"><span class="ai-dot"></span>Loading full reasoning&hellip;</div></div>'
+    + '<div class="section-title-sm">Pros &amp; Cons For You</div>'
+    + '<div class="pros-cons-grid"><div class="pros-box"><div class="pc-title">Strengths</div>' + prosHtml + '</div><div class="cons-box"><div class="pc-title">Considerations</div>' + consHtml + '</div></div>'
+    + '<div class="section-title-sm">Host Details</div>'
+    + '<div style="background:var(--ivory);border-radius:10px;padding:.85rem;margin-bottom:1.25rem;display:grid;grid-template-columns:1fr 1fr;gap:.5rem">'
+      + '<div style="background:var(--white);border-radius:7px;padding:.65rem"><div style="font-size:.62rem;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:.2rem">Availability</div><div style="font-size:.82rem;font-weight:600">' + host.availability.join(', ') + '</div></div>'
+      + '<div style="background:var(--white);border-radius:7px;padding:.65rem"><div style="font-size:.62rem;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:.2rem">Expertise</div><div style="font-size:.82rem;font-weight:600">' + host.support_areas.join(', ') + '</div></div>'
+      + '<div style="background:var(--white);border-radius:7px;padding:.65rem;grid-column:span 2"><div style="font-size:.62rem;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:.2rem">Home</div><div style="font-size:.82rem;font-weight:600">' + host.home_details + '</div></div>'
+    + '</div>'
+    + '<div class="section-title-sm">Reviews from Previous Students (' + reviews.length + ')</div>' + reviewsHtml
+    + '<div style="display:flex;gap:.5rem;margin-top:.5rem">' + ctaBtn + '<button class="btn btn-ghost btn-md" onclick="closeHostModal()">Close</button></div>';
+  document.getElementById('host-modal').classList.remove('hidden');
+  getFullReason(host, u, function(text) {
+    var el = document.getElementById('modal-full-reason');
+    if (el) el.textContent = text;
+  });
+}
+
+function closeHostModal() { document.getElementById('host-modal').classList.add('hidden'); }
+
+function renderPlan() {
+  var u    = currentUser;
+  var host = findUser(accepted[u.email]);
+  var plan = getMyPlan();
+  if (host) {
+    var ckey = host.email + '_' + u.email;
+    localStorage.setItem('kw_msg_seen_' + ckey, Date.now().toString());
+    updatePlanBadge();
+  }
+  if (!host || !plan) {
+    var msg = !accepted[u.email]
+      ? '<div style="text-align:center;padding:3rem;color:var(--muted)"><div style="font-size:1rem;font-weight:700;margin-bottom:.5rem">No arrival plan yet</div><div style="font-size:.84rem;margin-bottom:1.25rem">Once your host accepts your request and builds your plan, it will appear here.</div><button class="btn btn-green btn-md" onclick="showPage(\'dashboard\')">View Host Matches</button></div>'
+      : '<div style="text-align:center;padding:3rem;color:var(--muted)"><div style="font-size:1rem;font-weight:700;margin-bottom:.5rem">Your host is building your plan</div><div style="font-size:.84rem">Your host has accepted you. Check back soon.</div></div>';
+    document.getElementById('page-plan').innerHTML = '<div class="banner"><div><h2>My Arrival Plan</h2><p>Your AI-generated week-by-week arrival guide</p></div></div>' + msg;
+    return;
+  }
+  var hostLangs = ''; for (var i = 0; i < host.languages_spoken.length; i++) hostLangs += '<span class="host-info-pill">' + host.languages_spoken[i] + '</span>';
+  var hostAreas = ''; for (var i = 0; i < host.support_areas.length; i++) hostAreas += '<span class="host-info-pill">' + host.support_areas[i] + '</span>';
+  var allT = [];
+  for (var wi = 0; wi < plan.weeks.length; wi++) for (var ti = 0; ti < plan.weeks[wi].tasks.length; ti++) allT.push(plan.weeks[wi].tasks[ti]);
+  var doneT = 0;
+  for (var i = 0; i < allT.length; i++) { if (planChecks[host.email + '_' + u.email + '_' + allT[i].id]) doneT++; }
+  var pct = allT.length ? Math.round(doneT / allT.length * 100) : 0;
+  var ckey = host.email + '_' + u.email;
+  var msgs = chatMsgs[ckey] || [];
+  var chatHtml = '';
+  for (var mi = 0; mi < msgs.length; mi++) {
+    var m = msgs[mi]; var isMe = m.from === 'student';
+    var avStyle = isMe ? 'background:var(--gold);color:var(--dark)' : 'background:var(--green);color:#fff';
+    var time = m.ts ? new Date(m.ts).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
+    chatHtml += '<div style="display:flex;gap:.4rem;align-items:flex-end;' + (isMe ? 'flex-direction:row-reverse;' : '') + 'margin-bottom:.4rem">'
+      + '<div style="width:24px;height:24px;border-radius:50%;' + avStyle + ';font-size:.58rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">' + (isMe ? gi(u) : gi(host)) + '</div>'
+      + '<div><div style="max-width:78%;padding:.5rem .75rem;border-radius:' + (isMe ? '10px 10px 2px 10px' : '2px 10px 10px 10px') + ';font-size:.8rem;line-height:1.5;background:' + (isMe ? 'var(--purple);color:#fff' : 'var(--ivory)') + '">' + m.text + '</div>'
+      + '<div style="font-size:.62rem;color:var(--muted);padding:0 .5rem;' + (isMe ? 'text-align:right' : '') + '">' + time + '</div></div></div>';
+  }
+  if (!msgs.length) chatHtml = '<div style="text-align:center;color:var(--muted);font-size:.79rem;padding:1rem">No messages yet — say hello to ' + host.first_name + '!</div>';
+
+  var html = '<div class="banner"><div><h2>My Arrival Plan</h2><p>Built by ' + host.first_name + ' &middot; ' + doneT + '/' + allT.length + ' tasks done</p></div></div>';
+  html += '<div class="host-info-card"><div class="host-info-av">' + gi(host) + '</div><div style="flex:1"><div class="host-info-name">' + host.first_name + ' ' + host.last_name + '</div><div class="host-info-meta">Boston &middot; ' + (host.rating >= 10 ? host.rating + '/100' : '&#9733; ' + host.rating) + ' &middot; ' + host.home_details + '</div><div class="host-info-pills">' + hostLangs + hostAreas + '</div><div class="plan-progress-bar"><div class="plan-progress-fill" style="width:' + pct + '%"></div></div><div style="font-size:.7rem;color:rgba(255,255,255,.4);margin-top:.3rem">' + pct + '% complete &middot; ' + doneT + '/' + allT.length + ' tasks</div></div></div>';
+  html += '<div style="background:var(--white);border-radius:14px;border:1px solid var(--border);overflow:hidden;margin-bottom:1.25rem">';
+  for (var w = 0; w < plan.weeks.length; w++) {
+    var wk = plan.weeks[w]; var wId = 'pw-' + w; var wDone = 0;
+    for (var wt = 0; wt < wk.tasks.length; wt++) { if (planChecks[host.email + '_' + u.email + '_' + wk.tasks[wt].id]) wDone++; }
+    html += '<div style="border-bottom:1px solid var(--border)">';
+    html += '<div class="plan-week-hdr" onclick="toggleWeek(\'' + wId + '\')"><div class="plan-week-title"><div class="plan-week-dot" style="background:' + WEEK_COLORS[w % 4] + '"></div>Week ' + wk.week + ' - ' + wk.theme + ' <span class="tag tag-ivory" style="font-size:.64rem">' + wDone + '/' + wk.tasks.length + '</span></div><span style="font-size:.68rem;color:var(--muted)">&#9660;</span></div>';
+    html += '<div id="' + wId + '" style="display:' + (w === 0 ? 'block' : 'none') + ';padding:.75rem 1.1rem;background:var(--ivory)">';
+    for (var t = 0; t < wk.tasks.length; t++) {
+      var task = wk.tasks[t];
+      var ck   = host.email + '_' + u.email + '_' + task.id;
+      var ciId = 'ci-' + ck.replace(/[@.]/g, '_');
+      var isDone   = planChecks[ck] || false;
+      var comments = planComments[ck] || [];
+      html += '<div class="plan-task"><div class="plan-check' + (isDone ? ' done' : '') + '">' + (isDone ? '&#x2713;' : '') + '</div><div class="plan-task-body"><div class="plan-task-text' + (isDone ? ' done' : '') + '">' + task.text + '</div><div class="plan-task-meta"><span class="tag ' + (CAT_TAGS[task.category] || 'tag-ivory') + '" style="font-size:.64rem">' + task.category + '</span><span style="font-size:.67rem;color:var(--muted)">' + (task.hours || 1.5) + 'h</span></div>';
+      if (task.aiNote) html += '<div style="margin-top:.35rem;background:rgba(27,107,58,.06);border-left:2px solid var(--green);border-radius:4px;padding:.28rem .55rem;font-size:.73rem;line-height:1.5"><span style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--green)">Host tip - </span>' + task.aiNote + '</div>';
+      if (comments.length) {
+        html += '<div class="plan-comments">';
+        for (var c = 0; c < comments.length; c++) {
+          var who = comments[c].role === 'host' ? host.first_name + ' (host)' : u.first_name + ' (you)';
+          html += '<div class="comment-bubble ' + comments[c].role + '"><div class="comment-who">' + who + '</div>' + comments[c].text + '</div>';
+        }
+        html += '</div>';
+      }
+      html += '<div class="comment-input-row"><input class="comment-input" id="' + ciId + '" placeholder="Ask a question or add a note"/><button class="comment-btn" onclick="addStudentComment(\'' + ck + '\')">Send</button></div>';
+      html += '</div></div>';
+    }
+    html += '</div></div>';
+  }
+  html += '</div>';
+  html += '<div class="content-hdr"><h3>Messages - ' + host.first_name + '</h3></div>';
+  html += '<div style="background:var(--white);border-radius:14px;border:1px solid var(--border);overflow:hidden"><div style="display:flex;flex-direction:column;height:260px"><div style="flex:1;overflow-y:auto;padding:.85rem;display:flex;flex-direction:column;" id="plan-chat-body">' + chatHtml + '</div><div style="padding:.6rem .85rem;border-top:1px solid var(--border);display:flex;gap:.5rem"><input class="chat-input" id="plan-chat-input" placeholder="Message ' + host.first_name + '"/><button class="chat-send" onclick="sendPlanChat(\'' + host.email + '\')">Send</button></div></div></div>';
+
+  document.getElementById('page-plan').innerHTML = html;
+  var cb = document.getElementById('plan-chat-body'); if (cb) cb.scrollTop = cb.scrollHeight;
+}
+
+function toggleWeek(id) { var el = document.getElementById(id); if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none'; }
+
+function addStudentComment(ck) {
+  var ciId  = 'ci-' + ck.replace(/[@.]/g, '_');
+  var input = document.getElementById(ciId);
+  if (!input || !input.value.trim()) return;
+  if (!planComments[ck]) planComments[ck] = [];
+  planComments[ck].push({role:'student', text:input.value.trim(), ts:Date.now()});
+  save(); input.value = ''; showToast('Comment sent to host'); renderPlan();
+}
+
+function sendPlanChat(hostEmail) {
+  var input = document.getElementById('plan-chat-input');
+  if (!input || !input.value.trim()) return;
+  var ckey = hostEmail + '_' + currentUser.email;
+  if (!chatMsgs[ckey]) chatMsgs[ckey] = [];
+  chatMsgs[ckey].push({from:'student', text:input.value.trim(), ts:Date.now()});
+  save(); input.value = ''; showToast('Message sent'); renderPlan();
+}
+
+function renderAsk() {
+  var u    = currentUser;
+  var host = getMyHost();
+  askHistory = [];
+  var ctxLine = host ? 'Your host is ' + host.first_name + ' ' + host.last_name + '.' : 'You are still selecting a host.';
+  var suggestedQs = [
+    'Do I need a Social Security Number to open a bank account in Boston?',
+    'What should I bring to my first meeting with my host family?',
+    'How do I get from the airport to Northeastern University?'
+  ];
+  if (u.needs.indexOf('Housing') > -1) suggestedQs[0] = 'What documents do I need for off-campus housing in Boston?';
+  if (u.needs.indexOf('Banking') > -1) suggestedQs[1] = 'Which banks accept international students without an SSN?';
+  if (u.needs.indexOf('Culture') > -1) suggestedQs[2] = 'What cultural differences should I expect at a US university?';
+  var sugHtml = '';
+  for (var i = 0; i < suggestedQs.length; i++) {
+    sugHtml += '<button onclick="askSuggested(\'' + suggestedQs[i].replace(/'/g, '') + '\')" style="background:var(--ivory);border:1.5px solid var(--border);border-radius:8px;padding:.5rem .85rem;font-family:inherit;font-size:.77rem;color:var(--dark);cursor:pointer;text-align:left;transition:all .2s;width:100%" onmouseover="this.style.borderColor=\'var(--purple)\'" onmouseout="this.style.borderColor=\'var(--border)\'">' + suggestedQs[i] + '</button>';
+  }
+  document.getElementById('page-ask').innerHTML =
+    '<div class="banner"><div><h2>Ask AI</h2><p>Ask anything about arriving in Boston - I know your profile</p></div></div>'
+    + '<div class="chat-panel"><div class="chat-hdr"><div class="chat-hdr-av"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div><div class="chat-hdr-info"><strong>KoraWay AI</strong><span>Knows your profile &middot; ' + u.school + '</span></div></div>'
+    + '<div class="chat-body" id="ask-body">'
+      + '<div class="chat-bubble ai">Hi ' + u.first_name + '! I know you are from ' + u.country + ', speak ' + u.language + ', attending ' + u.school + ', arriving ' + u.arrival_period + '. ' + ctxLine + ' Try one of these or ask your own:<span class="chat-time">Now</span></div>'
+      + '<div style="display:flex;flex-direction:column;gap:.4rem;align-self:stretch;margin-top:.25rem">' + sugHtml + '</div>'
+    + '</div>'
+    + '<div class="chat-input-row"><input class="chat-input" id="ask-input" placeholder="Or type your own question..." onkeydown="if(event.key===\'Enter\')sendAsk()"/><button class="chat-send" onclick="sendAsk()">Ask</button></div></div>';
+}
+
+function askSuggested(q) {
+  var input = document.getElementById('ask-input');
+  if (input) { input.value = q; sendAsk(); }
+}
+
+function sendAsk() {
+  var input = document.getElementById('ask-input');
+  var text  = input.value.trim(); if (!text) return;
+  input.value = ''; input.disabled = true;
+  var body  = document.getElementById('ask-body');
+  var time  = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  body.innerHTML += '<div class="chat-bubble user">' + text + '<span class="chat-time">' + time + '</span></div>';
+  body.innerHTML += '<div class="chat-typing" id="typing"><div class="td"></div><div class="td"></div><div class="td"></div></div>';
+  body.scrollTop = body.scrollHeight;
+  askHistory.push({role:'user', content:text});
+  var u    = currentUser;
+  var host = getMyHost();
+  var system = 'You are KoraWay AI helping ' + u.first_name + ', a student from ' + u.country + ' who speaks ' + u.language + ', attending ' + u.school + ' in Boston, arriving ' + u.arrival_period + '. Needs: ' + u.needs.join(', ') + '.' + (host ? ' Their host is ' + host.first_name + ' ' + host.last_name + '.' : '') + ' Give practical, specific answers in 2-4 sentences.';
+  callClaude(askHistory, system, 250).then(function(reply) {
+    reply = reply || "That is a great question. I recommend reaching out to your university's international student office for the most current information.";
+    askHistory.push({role:'assistant', content:reply});
+    if (askHistory.length > 20) askHistory = askHistory.slice(-20);
+    var typing = document.getElementById('typing'); if (typing) typing.remove();
+    body.innerHTML += '<div class="chat-bubble ai">' + reply + '<span class="chat-time">' + time + '</span></div>';
+    body.scrollTop = body.scrollHeight;
+    input.disabled = false; input.focus();
+  });
+}
+
+function renderProfile() {
+  var u    = currentUser;
+  var prof = studentProfiles[u.email] || {};
+  var needs = ''; for (var i = 0; i < u.needs.length; i++) needs += '<div class="profile-pill">' + u.needs[i] + '</div>';
+  var photo = prof.photo ? '<img src="' + prof.photo + '" alt=""/>' : '<span>' + gi(u) + '</span>';
+  document.getElementById('page-profile').innerHTML =
+    '<div class="profile-hero-card"><div class="profile-photo-wrap"><div class="profile-photo">' + photo + '</div><button class="profile-photo-btn" onclick="uploadPhoto()">&#x270E;</button></div><div class="profile-hero-info" style="flex:1"><h2>' + u.first_name + ' ' + u.last_name + '</h2><p>' + u.email + '</p><div class="profile-pills"><div class="profile-pill">' + u.country + '</div><div class="profile-pill">' + u.language + '</div><div class="profile-pill">' + u.school + '</div>' + needs + '</div></div></div>'
+    + '<div class="info-card"><div class="info-card-hdr">About Me <button class="btn btn-ghost btn-sm" onclick="editBio()">Edit</button></div><div style="padding:.85rem 1.1rem;font-size:.84rem;line-height:1.7;color:' + (prof.bio ? 'var(--dark)' : 'var(--muted)') + '">' + (prof.bio || 'Add a short bio about yourself...') + '</div></div>'
+    + '<div class="info-card"><div class="info-card-hdr">Profile Details</div>'
+      + '<div class="info-row"><span class="lbl">Country</span><span class="val">' + u.country + '</span></div>'
+      + '<div class="info-row"><span class="lbl">Previous School</span><span class="val">Lamine Gueye High School, Dakar</span></div>'
+      + '<div class="info-row"><span class="lbl">Language</span><span class="val">' + u.language + '</span></div>'
+      + '<div class="info-row"><span class="lbl">Boston School</span><span class="val">' + (u.school || '-') + ' <button class="btn btn-ghost btn-sm" onclick="editSchool()" style="font-size:.65rem;padding:.2rem .5rem;margin-left:.35rem">Edit</button></span></div>'
+      + '<div class="info-row"><span class="lbl">Arrival Window</span><span class="val">' + u.arrival_period + '</span></div>'
+      + '<div class="info-row"><span class="lbl">Support Needs</span><span class="val">' + u.needs.join(', ') + ' <button class="btn btn-ghost btn-sm" onclick="editNeeds()" style="font-size:.65rem;padding:.2rem .5rem;margin-left:.35rem">Edit</button></span></div>'
+      + '<div class="info-row"><span class="lbl">Host Status</span><span class="val" style="color:var(--green)">' + (accepted[u.email] ? 'Accepted by host' : hostRequests[u.email] ? 'Request sent' : 'No host yet') + '</span></div>'
+    + '</div>'
+    + '<div style="display:flex;gap:.7rem;flex-wrap:wrap;margin-top:.5rem"><button class="btn btn-outline btn-md" onclick="doLogout()">Sign Out</button><button class="btn btn-ghost btn-md" onclick="clearDemo()">Reset Demo</button></div>';
+}
+
+function editBio() {
+  var p = studentProfiles[currentUser.email] || {};
+  var v = prompt('Edit your bio:', p.bio || '');
+  if (v === null) return;
+  if (!studentProfiles[currentUser.email]) studentProfiles[currentUser.email] = {};
+  studentProfiles[currentUser.email].bio = v.trim();
+  save();
+  renderProfile();
+}
+
+function editSchool() {
+  var schools = ['Northeastern University','Boston University','Harvard University','MIT','Boston College','UMass Boston'];
+  var opts = schools.map(function(s,i){ return (i+1)+'. '+s; }).join('\n');
+  var v = prompt('Choose your school:\n' + opts + '\n\nEnter number:');
+  if (!v) return;
+  var idx = parseInt(v) - 1;
+  if (idx >= 0 && idx < schools.length) {
+    currentUser.school = schools[idx];
+    for (var i = 0; i < users.length; i++) { if (users[i].email === currentUser.email) { users[i].school = schools[idx]; break; } }
+    localStorage.setItem('kw_current', JSON.stringify(currentUser));
+    save(); renderProfile();
+  }
+}
+
+function editNeeds() {
+  var allNeeds = ['Housing','Banking','Academic','Culture','Language'];
+  var current  = currentUser.needs || [];
+  var opts = allNeeds.map(function(n){ return n + (current.indexOf(n) > -1 ? ' (selected)' : ''); }).join('\n');
+  var v = prompt('Toggle needs — enter comma-separated names to set (e.g. Housing, Banking):\n\nCurrent: ' + current.join(', ') + '\n\nAvailable:\n' + opts);
+  if (!v) return;
+  var newNeeds = v.split(',').map(function(x){ return x.trim(); }).filter(function(x){ return allNeeds.indexOf(x) > -1; });
+  if (!newNeeds.length) { alert('No valid needs entered. Using: ' + allNeeds.join(', ')); return; }
+  currentUser.needs = newNeeds;
+  for (var i = 0; i < users.length; i++) { if (users[i].email === currentUser.email) { users[i].needs = newNeeds; break; } }
+  localStorage.setItem('kw_current', JSON.stringify(currentUser));
+  save(); renderProfile();
+}
+
+function uploadPhoto() {
+  var input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*';
+  input.onchange = function(e) {
+    var f = e.target.files[0]; if (!f) return;
+    var r = new FileReader();
+    r.onload = function(ev) {
+      if (!studentProfiles[currentUser.email]) studentProfiles[currentUser.email] = {};
+      studentProfiles[currentUser.email].photo = ev.target.result; save();
+      var sb = document.getElementById('sb-photo');
+      if (sb) sb.innerHTML = '<img src="' + ev.target.result + '" alt="" style="width:100%;height:100%;object-fit:cover"/>';
+      renderProfile();
+    };
+    r.readAsDataURL(f);
+  };
+  input.click();
+}
+
+function clearDemo() {
+  if (!confirm('Reset all demo data?')) return;
+  var keys = Object.keys(localStorage);
+  for (var i = 0; i < keys.length; i++) { if (keys[i].startsWith('kw_')) localStorage.removeItem(keys[i]); }
+  location.reload();
+}
+
+window.addEventListener('DOMContentLoaded', function() {
+  var autostart = localStorage.getItem('kw_demo_autostart');
+  if (autostart === 'student') {
+    localStorage.removeItem('kw_demo_autostart');
+    var aminata = findUser('aminata@example.com');
+    if (aminata) { currentUser = aminata; localStorage.setItem('kw_current', JSON.stringify(aminata)); launchApp(); return; }
+  }
+  if (currentUser && currentUser.type === 'Student') launchApp();
+});
+</script>
+</body>
+</html>
