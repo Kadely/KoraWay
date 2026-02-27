@@ -270,6 +270,7 @@ body{display:flex;flex-direction:column}
       <div id="page-impact"   style="display:none"></div>
       <div id="page-ask"      style="display:none"></div>
       <div id="page-profile"  style="display:none"></div>
+
     </div>
   </div>
 </div>
@@ -449,13 +450,13 @@ function seedActivityLog(studentName) {
 }
 
 function showPage(p) {
-  ['dashboard','students','impact','profile'].forEach(function(pg) {
+  ['dashboard','students','impact','ask','profile'].forEach(function(pg) {
     document.getElementById('page-'+pg).style.display='none';
     var sn=document.getElementById('sn-'+pg); if(sn) sn.classList.remove('active');
   });
   document.getElementById('page-'+p).style.display='block';
   var sn=document.getElementById('sn-'+p); if(sn) sn.classList.add('active');
-  var titles={dashboard:'Dashboard',students:'My Students',impact:'My Activity',profile:'My Profile'};
+  var titles={dashboard:'Dashboard',students:'My Students',impact:'My Activity',ask:'Ask AI',profile:'My Profile'};
   document.getElementById('main-title').textContent = titles[p] || '';
   if (p==='dashboard') renderDashboard();
   if (p==='students')  renderStudents();
@@ -956,8 +957,8 @@ function sendHostAsk() {
   var u = currentUser;
   var myStudents = getAcceptedStudents();
   var student = myStudents[0] || null;
-  var system = 'You are KoraWay AI advising ' + u.first_name + ', a host family in Boston.'
-    + (student ? ' They are hosting ' + student.first_name + ' from ' + student.country + ', speaks ' + student.language + ', needs: ' + (student.needs||[]).join(', ') + ', arriving ' + student.arrival_period + '.' : '')
+  var system = 'You are KoraWay AI advising ' + u.first_name + ', a host family in Boston. They speak ' + (u.languages_spoken||[]).join(', ') + ' and support ' + (u.support_areas||[]).join(', ') + '.'
+    + (student ? ' They are hosting ' + student.first_name + ' ' + student.last_name + ' from ' + student.country + ', speaks ' + student.language + ', attending ' + (student.school||'a Boston university') + ', needs: ' + (student.needs||[]).join(', ') + ', arriving ' + student.arrival_period + '. Student bio: ' + (student.bio||'') + '.' : '')
     + ' Always respond in English. Be practical and specific. Use bullet points and bold text to make your answer easy to read. Keep it concise — 3 to 5 bullet points max.';
   callClaude(hostAskHistory, system, 250).then(function(reply) {
     reply = reply || 'Great question. I would recommend checking with the international student office at the student\'s university for the most current guidance.';
