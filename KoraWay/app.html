@@ -1086,6 +1086,16 @@ function askSuggested(q) {
   if (input) { input.value = q; sendAsk(); }
 }
 
+function cleanReply(text) {
+  return text
+    .replace(/#{1,6}\s+/g, '')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '$1')
+    .replace(/^[-•]\s+/gm, '· ')
+    .replace(/\n{2,}/g, '<br/><br/>')
+    .replace(/\n/g, '<br/>');
+}
+
 function sendAsk() {
   var input = document.getElementById('ask-input');
   var text  = input.value.trim(); if (!text) return;
@@ -1098,13 +1108,13 @@ function sendAsk() {
   askHistory.push({role:'user', content:text});
   var u    = currentUser;
   var host = getMyHost();
-  var system = 'You are KoraWay AI helping ' + u.first_name + ', a student from ' + u.country + ' who speaks ' + u.language + ', attending ' + u.school + ' in Boston, arriving ' + u.arrival_period + '. Needs: ' + u.needs.join(', ') + '.' + (host ? ' Their host is ' + host.first_name + ' ' + host.last_name + '.' : '') + ' Give practical, specific answers in 2-4 sentences.';
+  var system = 'You are KoraWay AI helping ' + u.first_name + ', a student from ' + u.country + ' who speaks ' + u.language + ', attending ' + u.school + ' in Boston, arriving ' + u.arrival_period + '. Needs: ' + u.needs.join(', ') + '.' + (host ? ' Their host is ' + host.first_name + ' ' + host.last_name + '.' : '') + ' Give practical, specific answers in 2-4 sentences in English only. No markdown formatting.';
   callClaude(askHistory, system, 250).then(function(reply) {
     reply = reply || "That is a great question. I recommend reaching out to your university's international student office for the most current information.";
     askHistory.push({role:'assistant', content:reply});
     if (askHistory.length > 20) askHistory = askHistory.slice(-20);
     var typing = document.getElementById('typing'); if (typing) typing.remove();
-    body.innerHTML += '<div class="chat-bubble ai">' + reply + '<span class="chat-time">' + time + '</span></div>';
+    body.innerHTML += '<div class="chat-bubble ai">' + cleanReply(reply) + '<span class="chat-time">' + time + '</span></div>';
     body.scrollTop = body.scrollHeight;
     input.disabled = false; input.focus();
   });
